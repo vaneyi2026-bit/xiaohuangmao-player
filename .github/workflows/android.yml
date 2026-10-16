@@ -27,7 +27,6 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.29.3'
           cache: true
 
       - name: 准备签名
@@ -40,6 +39,8 @@ jobs:
           else
             echo "::warning::未配置签名密钥，使用临时调试签名"
           fi
+
+      - run: flutter --version
 
       - name: 构建（日志写入 ci.log）
         shell: bash
