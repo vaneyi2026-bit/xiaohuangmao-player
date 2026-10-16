@@ -78,6 +78,14 @@ ThemeData buildTheme(Brightness b) {
       secondaryLabelStyle: const TextStyle(color: kInk, fontWeight: FontWeight.w700),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
+    segmentedButtonTheme: SegmentedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? kYellow : null),
+        foregroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected) ? kInk : scheme.onSurface),
+        iconColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? kInk : null),
+      ),
+    ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? kInk : null),
       trackColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? kYellow : null),

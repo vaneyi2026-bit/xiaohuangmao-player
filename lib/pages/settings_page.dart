@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../import_service.dart';
@@ -19,11 +21,25 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   int? _thumbBytes;
   int? _free;
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _refresh();
+    store.addListener(_onStore);
+  }
+
+  @override
+  void dispose() {
+    store.removeListener(_onStore);
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onStore() {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(seconds: 2), _refresh);
   }
 
   Future<void> _refresh() async {

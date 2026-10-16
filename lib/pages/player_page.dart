@@ -1340,6 +1340,14 @@ class _PanelState extends State<_Panel> {
             if (s.abB != null) _nudgeRow('B 点', s.abB!, (d) => _do(() => s._abNudge(false, d))),
           ],
           _title('字幕'),
+          if (subsList.isNotEmpty)
+            _radio('自动（视频默认字幕）', cur.subtitle.id == 'auto', () => _do(() async {
+                  await s.player.setSubtitleTrack(SubtitleTrack.auto());
+                  if (it != null) {
+                    store.rec(it.id).subMode = 'auto';
+                    store.save();
+                  }
+                })),
           _radio('关闭字幕', subOff, () => _do(() async {
                 await s.player.setSubtitleTrack(SubtitleTrack.no());
                 if (it != null) {
