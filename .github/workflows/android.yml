@@ -1,0 +1,77 @@
+name: Android APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.29.3'
+          cache: true
+
+      - name: 准备签名
+        env:
+          KEYSTORE_B64: ${{ secrets.XHM_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            echo "XHM_KEYSTORE=$RUNNER_TEMP/release.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::未配置签名密钥，使用临时调试签名"
+          fi
+
+      - name: 构建（日志写入 ci.log）
+        shell: bash
+        env:
+          XHM_KEYSTORE_PASSWORD: ${{ secrets.XHM_KEYSTORE_PASSWORD }}
+          XHM_KEY_ALIAS: ${{ secrets.XHM_KEY_ALIAS }}
+          XHM_KEY_PASSWORD: ${{ secrets.XHM_KEY_PASSWORD }}
+        run: |
+          set -o pipefail
+          {
+            echo "== flutter create" && flutter create --platforms=android --org com.vaneyi --project-name xhmplayer . &&
+            echo "== patch" && python3 tool/patch_android.py &&
+            echo "== pub get" && flutter pub get &&
+            echo "== analyze" && flutter analyze --no-fatal-infos --no-fatal-warnings &&
+            echo "== test" && flutter test &&
+            echo "== build" && flutter build apk --release --target-platform android-arm64
+          } 2>&1 | tee ci.log
+
+      - name: 发布到 Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VER=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)
+          TAG="v${VER}-build${{ github.run_number }}"
+          OUT="xiaohuangmao-player-${VER}-build${{ github.run_number }}.apk"
+          cp build/app/outputs/flutter-apk/app-release.apk "$OUT"
+          gh release create "$TAG" "$OUT" ci.log --prerelease --title "小黄毛影音 ${VER}（第 ${{ github.run_number }} 次构建）" --notes "提交 ${{ github.sha }}"
+
+      - name: 失败时发布日志
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          touch ci.log
+          gh release create "ci-failed-${{ github.run_number }}" ci.log --prerelease --title "构建失败日志 ${{ github.run_number }}" --notes "提交 ${{ github.sha }}"

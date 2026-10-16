@@ -1,0 +1,19 @@
+name: xhmplayer
+description: 小黄毛影音 —— 个人视频播放器（自用及小范围分享）
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  media_kit: ^1.1.11
+  media_kit_video: ^1.2.5
+  media_kit_libs_video: ^1.0.5
+
+flutter:
+  uses-material-design: true
