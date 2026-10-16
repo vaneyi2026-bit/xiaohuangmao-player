@@ -151,16 +151,15 @@ def main():
     tap(*ab)
     time.sleep(1.2)
     shot("07_AB循环")
-    # 面板
-    tap(w / 2, h / 2)
-    time.sleep(0.5)
+    # 面板（AB 操作后控制条仍显示）
     tap(w - (8 + 24) * d, (8 + 24) * d)
     time.sleep(2)
     shot("08_播放面板")
     adb("shell", "input", "swipe", str(int(w / 2)), str(int(h * 0.55)), str(int(w / 2)), str(int(h * 0.1)), "400")
     time.sleep(1)
     shot("09_播放面板_字幕音轨")
-    adb("shell", "input", "keyevent", "KEYCODE_BACK")
+    if os.path.getsize(os.path.join(OUT, "08_播放面板.png")) != os.path.getsize(os.path.join(OUT, "07_AB循环.png")):
+        adb("shell", "input", "keyevent", "KEYCODE_BACK")  # 关闭面板
     time.sleep(1)
     # 长按 2 倍速
     adb("shell", "input", "swipe", str(int(w / 2)), str(int(h / 2)), str(int(w / 2)), str(int(h / 2)), "2500", timeout=30)

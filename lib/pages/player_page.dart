@@ -769,7 +769,8 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
                         Shadow(color: Colors.black, blurRadius: 1, offset: Offset(1, 1)),
                       ],
                     ),
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                    // 控制条显示时字幕上移，避开底部控制
+                    padding: EdgeInsets.fromLTRB(24, 0, 24, (controlsVisible || !playing) && !locked ? 120 : 36),
                   ),
                 ),
               ),
