@@ -20,8 +20,8 @@ if "XHM_KEYSTORE" not in s:
             if (ks != null && file(ks).exists()) {
                 storeFile = file(ks)
                 storePassword = System.getenv("XHM_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("XHM_KEY_ALIAS")
-                keyPassword = System.getenv("XHM_KEY_PASSWORD")
+                keyAlias = System.getenv("XHM_KEY_ALIAS")?.takeIf { it.isNotEmpty() } ?: "xhm"
+                keyPassword = System.getenv("XHM_KEY_PASSWORD")?.takeIf { it.isNotEmpty() } ?: System.getenv("XHM_KEYSTORE_PASSWORD")
             }
         }
     }

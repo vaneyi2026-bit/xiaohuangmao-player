@@ -42,13 +42,10 @@ def shot(name):
 
 
 def screen():
-    m = re.search(r"(\d+)x(\d+)", sh("wm size"))
-    w, h = int(m.group(1)), int(m.group(2))
+    import struct
+    png = adb("exec-out", "screencap", "-p", timeout=30).stdout
+    w, h = struct.unpack(">II", png[16:24])  # 截图尺寸即当前方向
     d = int(re.search(r"(\d+)", sh("wm density")).group(1)) / 160
-    # 当前方向
-    rot = sh("dumpsys input | grep -m1 -i 'SurfaceOrientation'")
-    if re.search(r"SurfaceOrientation:\s*[13]", rot):
-        w, h = h, w
     return w, h, d
 
 
@@ -132,11 +129,13 @@ def main():
     if not tap_text("播放 lesson", 15):
         tap_text("lesson", 5)
     time.sleep(6)
+    tap_text("Got it", 6)  # 系统首次全屏提示
+    time.sleep(1)
     shot("04_播放_手势提示")
     if not tap_text("知道了", 8):
         w, h, d = screen()
-        tap(w / 2, h / 2 + 150 * d)
-    time.sleep(2)
+        tap(w / 2, h - 60 * d)
+    time.sleep(3)
     w, h, d = screen()
     say("screen", w, h, d)
     shot("05_播放中")
@@ -165,28 +164,29 @@ def main():
     time.sleep(1)
     # 长按 2 倍速
     adb("shell", "input", "swipe", str(int(w / 2)), str(int(h / 2)), str(int(w / 2)), str(int(h / 2)), "2500", timeout=30)
+    shot("10_长按后")
     # 退出播放器
     adb("shell", "input", "keyevent", "KEYCODE_BACK")
-    time.sleep(1)
-    adb("shell", "input", "keyevent", "KEYCODE_BACK")
     time.sleep(3)
-    shot("10_首页_继续观看")
+    shot("11_首页_继续观看")
     tap_text(r"(^|\| )媒体库(\s|$)", 8)
     time.sleep(2)
-    shot("11_媒体库")
+    shot("12_媒体库")
     tap_text(r"(^|\| )设置(\s|$)", 8)
     time.sleep(2)
-    shot("12_设置")
+    shot("13_设置")
     sh("cmd uimode night yes")
     time.sleep(3)
     tap_text(r"(^|\| )观看(\s|$)", 8)
     time.sleep(2)
-    shot("13_首页_深色")
+    shot("14_首页_深色")
 
     lc = adb("logcat", "-d", timeout=60).stdout.decode(errors="ignore")
     with open(os.path.join(OUT, "logcat.txt"), "w", encoding="utf-8") as f:
         f.write(lc)
-    crashes = [l for l in lc.splitlines() if "FATAL EXCEPTION" in l or ("E flutter" in l) or "AndroidRuntime" in l]
+    crashes = [l for l in lc.splitlines()
+               if "FATAL EXCEPTION" in l or " E flutter" in l or "E AndroidRuntime" in l
+               or ("I flutter" in l and ("Exception" in l or "Error" in l or "#0 " in l or "Null check" in l))]
     say("crash/flutter-error lines:", len(crashes))
     for l in crashes[:80]:
         say(l)

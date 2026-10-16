@@ -56,7 +56,7 @@ jobs:
             echo "== pub get" && flutter pub get &&
             echo "== analyze" && flutter analyze --no-fatal-infos --no-fatal-warnings &&
             echo "== test" && flutter test &&
-            echo "== build" && flutter build apk --release --target-platform android-arm64
+            echo "== build" && flutter build apk --release --split-per-abi --target-platform android-arm,android-arm64
           } 2>&1 | tee ci.log
 
       - name: 发布到 Releases
@@ -65,9 +65,11 @@ jobs:
         run: |
           VER=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)
           TAG="v${VER}-build${{ github.run_number }}"
-          OUT="xiaohuangmao-player-${VER}-build${{ github.run_number }}.apk"
-          cp build/app/outputs/flutter-apk/app-release.apk "$OUT"
-          gh release create "$TAG" "$OUT" ci.log --prerelease --title "小黄毛影音 ${VER}（第 ${{ github.run_number }} 次构建）" --notes "提交 ${{ github.sha }}"
+          A64="xiaohuangmao-player-${VER}-build${{ github.run_number }}-arm64.apk"
+          A32="xiaohuangmao-player-${VER}-build${{ github.run_number }}-32bit-old-phones.apk"
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk "$A64"
+          cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk "$A32"
+          gh release create "$TAG" "$A64" "$A32" ci.log --prerelease --title "小黄毛影音 ${VER}（第 ${{ github.run_number }} 次构建）" --notes "提交 ${{ github.sha }}"
 
       - name: 失败时发布日志
         if: failure()

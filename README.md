@@ -51,7 +51,7 @@ flutter build apk --release --target-platform android-arm64
 
 未配置签名时，每次构建都会用一次性的调试签名，新版本不能覆盖安装旧版本。
 配置方法：在仓库 **Settings → Secrets and variables → Actions** 添加
-`XHM_KEYSTORE_B64`（密钥库文件的 base64）、`XHM_KEYSTORE_PASSWORD`、`XHM_KEY_ALIAS`、`XHM_KEY_PASSWORD`。
+`XHM_KEYSTORE_B64`（密钥库文件的 base64）和 `XHM_KEYSTORE_PASSWORD` 两项（别名默认 `xhm`，密钥密码默认与库密码相同）。
 密钥库丢失后无法再覆盖升级，请备份。
 
 ## 开源许可
