@@ -61,6 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 selected: {p.themeMode},
                 onSelectionChanged: (s) {
                   p.themeMode = s.first;
+                  store.themeMode.value = s.first;
                   store.save();
                 },
               ),

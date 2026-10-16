@@ -276,7 +276,7 @@ class _LibraryPageState extends State<LibraryPage> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
           child: Row(children: [
-            SizedBox(width: 128, child: Thumb(item: it, radius: 8)),
+            SizedBox(width: 128, child: MediaThumb(item: it, radius: 8)),
             const SizedBox(width: 12),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

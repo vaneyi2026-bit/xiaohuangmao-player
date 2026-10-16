@@ -129,7 +129,7 @@ class _ContinueCard extends StatelessWidget {
           onTap: onTap,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Stack(children: [
-              Thumb(item: item, radius: 0),
+              MediaThumb(item: item, radius: 0),
               Positioned.fill(
                 child: Center(
                   child: Container(

@@ -23,6 +23,9 @@ class AppStore extends ChangeNotifier {
   final Map<String, WatchRecord> records = {};
   Prefs prefs = Prefs();
 
+  /// 主题单独通知，避免每次保存进度都重建整个 App。
+  final themeMode = ValueNotifier<int>(0);
+
   /// 缩略图版本号，用于刷新图片缓存。
   final Map<String, int> thumbGen = {};
   final Set<String> _probed = {};
@@ -58,6 +61,7 @@ class AppStore extends ChangeNotifier {
         final recs = Map<String, dynamic>.from(j['records'] as Map? ?? const {});
         recs.forEach((k, v) => records[k] = WatchRecord.fromJson(Map<String, dynamic>.from(v as Map)));
         if (j['prefs'] is Map) prefs = Prefs.fromJson(Map<String, dynamic>.from(j['prefs'] as Map));
+        themeMode.value = prefs.themeMode;
       } catch (e) {
         debugPrint('library.json 读取失败: $e');
         // 保留损坏的文件，避免覆盖
@@ -235,6 +239,7 @@ class AppStore extends ChangeNotifier {
   void resetPrefs() {
     final hint = prefs.gestureHintShown;
     prefs = Prefs()..gestureHintShown = hint;
+    themeMode.value = prefs.themeMode;
     save();
   }
 

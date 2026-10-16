@@ -51,11 +51,11 @@ class _LogoPainter extends CustomPainter {
 }
 
 /// 视频缩略图：时长角标与观看进度条。
-class Thumb extends StatelessWidget {
+class MediaThumb extends StatelessWidget {
   final MediaItem item;
   final double radius;
   final bool showProgress;
-  const Thumb({super.key, required this.item, this.radius = 10, this.showProgress = true});
+  const MediaThumb({super.key, required this.item, this.radius = 10, this.showProgress = true});
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +183,7 @@ class MediaStrip extends StatelessWidget {
               child: SizedBox(
                 width: 168,
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Thumb(item: it),
+                  MediaThumb(item: it),
                   const SizedBox(height: 6),
                   Text(it.name,
                       maxLines: 2,

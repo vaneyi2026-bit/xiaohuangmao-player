@@ -40,16 +40,16 @@ class XhmApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListenableBuilder(
-      listenable: store,
-      builder: (context, _) => MaterialApp(
+    return ValueListenableBuilder<int>(
+      valueListenable: store.themeMode,
+      builder: (context, mode, _) => MaterialApp(
         title: '小黄毛影音',
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
         scaffoldMessengerKey: messengerKey,
         theme: buildTheme(Brightness.light),
         darkTheme: buildTheme(Brightness.dark),
-        themeMode: const [ThemeMode.system, ThemeMode.light, ThemeMode.dark][store.prefs.themeMode.clamp(0, 2)],
+        themeMode: const [ThemeMode.system, ThemeMode.light, ThemeMode.dark][mode.clamp(0, 2)],
         locale: const Locale('zh', 'CN'),
         supportedLocales: const [Locale('zh', 'CN')],
         localizationsDelegates: const [

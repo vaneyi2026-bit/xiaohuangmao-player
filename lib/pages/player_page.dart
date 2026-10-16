@@ -112,7 +112,9 @@ class _PlayerPageState extends State<PlayerPage> with WidgetsBindingObserver {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
     showGestureHint = !store.prefs.gestureHintShown;
     _setup();
-    _load(idx);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _load(idx);
+    });
     Native.getBrightness().then((v) => _brightness = v);
     Native.getVolume().then((v) => _volume = v);
   }

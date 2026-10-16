@@ -28,7 +28,7 @@ class RecentPage extends StatelessWidget {
               final r = store.rec(it.id);
               return ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                leading: SizedBox(width: 112, child: Thumb(item: it, radius: 8)),
+                leading: SizedBox(width: 112, child: MediaThumb(item: it, radius: 8)),
                 title: Text(it.name, maxLines: 2, overflow: TextOverflow.ellipsis),
                 subtitle: Text(
                   r.finished ? '已看完 · ${fmtDate(r.lastWatchedAt)}' : '看到 ${fmtMs(r.positionMs)} · ${fmtDate(r.lastWatchedAt)}',
